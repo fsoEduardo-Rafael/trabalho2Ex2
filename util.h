@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <malloc.h>
 #include <pthread.h>
+#include <time.h>
 
 int w[100];
 typedef struct numeros Numeros;//Definindo struct para numeros a serem comparados
@@ -21,10 +22,11 @@ void print_elements(int argc, char **argv){
 	
 	assert(sizeof(argv) <= 100);//Garantindo que a entrada possua ate 100 argumentos
 	printf("Numer: %d\n", argc - 2);//os dois primeiros sao: nome_prog e num_entradas
-	printf("Numero de elementos: %d\nElementos:\n", argc -2);
+	printf("Numero de elementos: %d\nElementos: ", argc -2);
 	for(i=2 ; i<argc ; ++i){
-		printf("%d: %d\n", i-1, atoi(argv[i]));
+		printf("%d ", atoi(argv[i]));
 	}
+	printf("\n");
 }
 
 void create_threads_to_init_w(int n){//Função que cria n threads
@@ -57,6 +59,8 @@ void * create_threads_to_compare(int argc, char **argv){//Função que cria as t
 	}
 	pthread_t * thread = malloc(sizeof(pthread_t)*(argc-2/2));//alocando n/2 threads
 
+	clock_t start, end;
+	start = clock();
 	for(i = 0; i < size_array; ++i) {//Definindo maneira de percorrer e comparar todos os numeros
 		for(j = 0; j < size_array; ++j) {
 			//printf("i = %d e j = %d\n", i, j);
@@ -74,6 +78,8 @@ void * create_threads_to_compare(int argc, char **argv){//Função que cria as t
 	for(i=0 ; i < size_array ; ++i){//Dando join em todas as threads criadas
 		pthread_join(thread[i],NULL);
 	}
+	end = clock();
+	//printf("Tempo de execucao: %.2f\n", (double) end-start/CLOCKS_PER_SEC);
 }
 
 void * set_w(int arg){
