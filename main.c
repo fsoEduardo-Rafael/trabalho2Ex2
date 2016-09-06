@@ -16,15 +16,15 @@ int main (int argc, char **argv){
 	}
 	printf("---------------------------------------\n\n");
 
-	create_threads_to_compare(argc, argv);
+	create_threads_to_compare(argc, argv);//Criando threads para comparação
 	printf("Apos comparacao:\n");
-	for(i=2 ; i<argc ; ++i){
+	for(i=2 ; i<argc ; ++i){ //Imprimindo W apos comparação
 		printf("W[%d] = %d\n", i-2, w[i-2]);
 	}
 
 	for(i=0 ; i < argc-2 ; i++){
-		if(w[i] == 1)
-			printf("E o valor maximo e: %d\n\n", atoi(argv[i+2]));
+		if(w[i] == 1)//Se for 1, é o maior valor do vetor
+			printf("E o valor maximo e: %d\nSua posicao e:%d\n", atoi(argv[i+2]), i);
 	}
 	return 0;
 }
