@@ -5,8 +5,16 @@
 #include <pthread.h>
 
 int w[100];
+typedef struct numeros Numeros;
+struct numeros {
+	int num1;
+	int num2;
+};
+Numeros numeros;
+
 
 void *set_w();
+void *compare_numbers();
 
 void print_elements(int argc, char **argv){
 	int i;
@@ -21,7 +29,6 @@ void print_elements(int argc, char **argv){
 
 void create_threads_to_init_w(int n){
 	int i, result;
-	pid_t pid;
 	pthread_t * thread = malloc(sizeof(pthread_t)*n);//alocando n threads
 
 	for(i = 0; i < n; ++i) {
@@ -37,8 +44,48 @@ void create_threads_to_init_w(int n){
 	}
 }
 
+void * create_threads_to_compare(int argc, char **argv){
+	int i, j, result;
+	int size_array = argc-2;
+	int array[size_array];
+	int old_cancel_state;
+
+	for(i=0 ; i < size_array ; ++i){
+		array[i] = atoi(argv[i+2]);
+		printf("Array[%d] = %d\n",i, array[i]);
+	}
+	pthread_t * thread = malloc(sizeof(pthread_t)*(argc-2/2));//alocando n/2 threads
+
+	for(i = 0; i < size_array; ++i) {
+		for(j = 0; j < size_array; ++j) {
+			printf("i = %d e j = %d\n", i, j);
+			pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &old_cancel_state);
+			numeros.num1 = array[i];
+			numeros.num2 = array[j];
+			pthread_setcancelstate (old_cancel_state, NULL);
+	        result = pthread_create(&thread[i], NULL, &compare_numbers, (void*) i); 
+	        if( result != 0) {
+	            printf("ERRO!!\n");
+	        }
+	   }
+	}
+	for(i=0 ; i < size_array ; ++i){
+		pthread_join(thread[i],NULL);
+	}
+}
+
 void * set_w(int arg){
 	printf("arg = %d\n", arg);
-	printf("Thread %d com id %d trabalhando..\n", arg, (int) pthread_self());
+	printf("Thread %d trabalhando..\n", arg);
 	w[arg] = 1;
+}
+
+void * compare_numbers(int i){
+	int old_cancel_state;
+	printf("Entrou aqui\n");
+	printf("Base da comparacao = %d\n", i);
+	printf("Comparando %d x %d\n", numeros.num1, numeros.num2);
+	if(numeros.num1 < numeros.num2){
+		w[i] = 0; 
+	}
 }
