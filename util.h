@@ -64,10 +64,10 @@ void * create_threads_to_compare(int argc, char **argv){//Função que cria as t
 	for(i = 0; i < size_array; ++i) {//Definindo maneira de percorrer e comparar todos os numeros
 		for(j = 0; j < size_array; ++j) {
 			//printf("i = %d e j = %d\n", i, j);
-			pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &old_cancel_state);//Iniciando seção critica
+			//pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &old_cancel_state);//Iniciando seção critica
 			numeros.num1 = array[i];
 			numeros.num2 = array[j];
-			pthread_setcancelstate (old_cancel_state, NULL);//Fechando seção critica
+			//pthread_setcancelstate (old_cancel_state, NULL);//Fechando seção critica
 			//Após setar os valores de num1 e num2, criamos a thread que irá comparar estes 2 valores
 	        result = pthread_create(&thread[i], NULL, &compare_numbers, (void*) i); 
 	        if( result != 0) {
@@ -79,7 +79,7 @@ void * create_threads_to_compare(int argc, char **argv){//Função que cria as t
 		pthread_join(thread[i],NULL);
 	}
 	end = clock();
-	//printf("Tempo de execucao: %.2f\n", (double) end-start/CLOCKS_PER_SEC);
+	printf("Tempo de execucao: %.2f\n", (double) end-start/CLOCKS_PER_SEC);
 }
 
 void * set_w(int arg){
